@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Titan Frontlines</title>
+  <!-- Fonte gótica parecida com Cloister Black BT -->
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+  <!-- Ícone do Discord -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pO4WJ6P0CQD6fF8ZK4OJ6xM7E0+V9+e4KH1A+6H5l/6pZbZ5x2c+BSn5R9eXzU9y2D6xF6uO7N3E4u/2+zB0Kw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      background: black url('download (1).gif') no-repeat center center/cover;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+    /* Menu */
+    .menu-container {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+    }
+    .menu-button {
+      width: 35px;
+      height: 25px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.4s ease;
+    }
+    .bar {
+      height: 4px;
+      width: 100%;
+      background: white;
+      border-radius: 2px;
+      position: absolute;
+      left: 0;
+      transition: all 0.4s ease;
+    }
+    .bar:nth-child(1) { top: 0; }
+    .bar:nth-child(2) { top: 10px; }
+    .bar:nth-child(3) { top: 20px; }
+    .menu-button.open {
+      transform: rotate(180deg);
+    }
+    .menu-button.open .bar:nth-child(1) {
+      transform: rotate(45deg);
+      top: 10px;
+    }
+    .menu-button.open .bar:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-button.open .bar:nth-child(3) {
+      transform: rotate(-45deg);
+      top: 10px;
+    }
+    /* Sidebar */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -220px;
+      width: 220px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      transition: left 0.4s ease;
+      padding-top: 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .side-menu.open { left: 0; }
+    .side-menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      padding: 14px 25px;
+      width: 80%;
+      text-align: center;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+      transform: translateZ(0);
+    }
+    .side-menu a:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 0 20px rgba(0,123,255,0.8);
+      z-index: 10;
+    }
+    .side-menu a.inicio { background: #007bff; }
+    .side-menu a.inicio:hover { background: #005fcc; }
+    .side-menu a.discord {
+      background: #5865F2;
+      color: white;
+      font-weight: bold;
+    }
+    .side-menu a.discord:hover { background: #4752c4; }
+    /* Conteúdo principal */
+    .title {
+      font-family: 'UnifrakturCook', cursive;
+      font-size: 3.5rem;
+      text-shadow: 0 0 10px rgba(0,0,0,0.7);
+      margin: 150px 0 50px 0;
+      letter-spacing: 3px;
+      text-align: center;
+    }
+    .play-button {
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 1.3rem;
+      padding: 18px 45px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+      transform: translateZ(0);
+    }
+    .play-button:hover {
+      transform: translateY(-5px) scale(1.05);
+      background: #005fcc;
+      box-shadow: 0 0 30px rgba(0, 123, 255, 0.8);
+      z-index: 10;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 15px rgba(0,123,255,0.5); }
+      50% { box-shadow: 0 0 25px rgba(0,123,255,0.8); }
+      100% { box-shadow: 0 0 15px rgba(0,123,255,0.5); }
+    }
+    /* Descrição */
+    .description-container {
+      width: 80%;
+      max-width: 900px;
+      margin: 80px auto 100px auto;
+      padding: 40px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 15px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    .desc-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .flag {
+      width: 30px;
+      height: 20px;
+      object-fit: cover;
+      border: 1px solid #fff;
+      border-radius: 3px;
+    }
+    .description-container p {
+      margin-bottom: 40px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+    }
+    .description-container strong { color: #00aaff; }
+    /* Botão música pequeno e transparente */
+    #musicBtn {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 5px rgba(255,255,255,0.3);
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    #musicBtn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+    /* Responsivo */
+    @media (max-width: 768px) {
+      .title { font-size: 2.5rem; }
+      .play-button { padding: 14px 35px; font-size: 1.1rem; }
+      .side-menu a { font-size: 16px; padding: 12px 20px; }
+      .desc-title { font-size: 1.3rem; }
+      .flag { width: 25px; height: 15px; }
+      .description-container p { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="menu-container">
+    <div class="menu-button" id="menuBtn">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </div>
+
+  <div class="side-menu" id="sideMenu">
+    <a href="#" class="inicio">Início</a>
+    <a href="https://discord.gg/2KxSw2WAz5" target="_blank" class="discord">
+      <i class="fab fa-discord"></i> Discord
+    </a>
+  </div>
+
+  <h1 class="title">Titan Frontlines</h1>
+  <button class="play-button" onclick="window.location.href='#'">Entrar no Jogo</button>
+
+  <div class="description-container">
+    <!-- Português -->
+    <h2 class="desc-title">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Flag_of_Brazil.svg" alt="Brasil" class="flag"> Português
+    </h2>
+    <p class="description-pt">
+      <strong>Titan Frontlines</strong> é um jogo de ação e exploração onde você enfrenta Titãs em meio ao campo de batalha. Suba pelas muralhas e entregue seus corações!
+    </p>
+
+    <!-- English -->
+    <h2 class="desc-title">
+      <img src="https://upload.wikimedia.org/wikipedia/en/a/a4/Flag_of_the_United_States.svg" alt="USA" class="flag"> English
+    </h2>
+    <p class="description-en">
+      <strong>Titan Frontlines</strong> is an action and exploration game where you face Titans on the battlefield. Climb the walls and <strong>Give Your Heart</strong>!
+    </p>
+  </div>
+
+  <!-- Música de fundo -->
+  <iframe id="bgMusic" width="0" height="0" src="https://www.youtube.com/embed/qKK-GVTxqow?autoplay=1&loop=1&playlist=qKK-GVTxqow" frameborder="0" allow="autoplay" allowfullscreen></iframe>
+  <button id="musicBtn" title="Ligar/Desligar música">🔊</button>
+
+  <script>
+    // Menu
+    const menuBtn = document.getElementById('menuBtn');
+    const sideMenu = document.getElementById('sideMenu');
+    menuBtn.addEventListener('click', () => {
+      menuBtn.classList.toggle('open');
+      sideMenu.classList.toggle('open');
+    });
+
+    // Música
+    const musicBtn = document.getElementById('musicBtn');
+    const bgMusic = document.getElementById('bgMusic');
+    let musicOn = true;
+
+    musicBtn.addEventListener('click', () => {
+      if(musicOn){
+        bgMusic.src = '';
+        musicBtn.textContent = '🔇';
+      } else {
+        bgMusic.src = 'https://www.youtube.com/embed/qKK-GVTxqow?autoplay=1&loop=1&playlist=qKK-GVTxqow';
+        musicBtn.textContent = '🔊';
+      }
+      musicOn = !musicOn;
+    });
+  </script>
+</body>
+</html>
